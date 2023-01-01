@@ -26,7 +26,13 @@ impl Lexer {
 
         self.skip_whitespace();
         let token = match self.ch {
-            '=' => Token::new(Assign, "=".into()),
+            '=' => match self.peek_char() {
+                '=' => {
+                    self.read_char();
+                    Token::new(Eq, "==".into())
+                },
+                _ =>  Token::new(Assign, "=".into())
+            }
             ';' => Token::new(Semicolon, ";".into()),
             ',' => Token::new(Comma, ",".into()),
             '(' => Token::new(LParen, "(".into()),
@@ -35,19 +41,25 @@ impl Lexer {
             '}' => Token::new(RBrace, "}".into()),
             '+' => Token::new(Plus, "+".into()),
             '-' => Token::new(Minus, '-'.into()),
-            '!' => Token::new(Bang, "!".into()),
+            '!' => match self.peek_char() {
+                '=' => {
+                    self.read_char();
+                    Token::new(NotEq, "!=".into())
+                },
+                _ => Token::new(Bang, "!".into()),
+            }
             '/' => Token::new(Slash, '/'.into()),
             '*' => Token::new(Asterisk, "*".into()),
             '<' => Token::new(Lt, '<'.into()),
             '>' => Token::new(Gt, '>'.into()),
             '\0' => Token::new(EOF, "".into()),
-            c if c.is_alphabetic() || c == '_' => {
+            c if is_alphabetic_ident(c) => {
                 let literal = self.read_identifier();
                 return Token::new(token::lookup_ident(&literal), literal);
             }
             c if c.is_ascii_digit() => {
                 let literal = self.read_number();
-                return Token::new(TokenType::Int, literal);
+                return Token::new(Int, literal);
             }
             c => Token::new(Illegal, c.to_string()),
         };
@@ -90,6 +102,10 @@ impl Lexer {
             self.read_char();
         }
     }
+
+    fn peek_char(&self) -> char {
+        self.input.chars().nth(self.read_position).unwrap_or('\0')
+    }
 }
 
 fn is_alphabetic_ident(ident: char) -> bool {
@@ -102,8 +118,8 @@ fn is_alphabetic_ident(ident: char) -> bool {
 #[cfg(test)]
 mod test {
     use crate::lexer::Lexer;
-    use crate::token::{Token, TokenType};
-    use table_test::*;
+    use crate::token::TokenType;
+    use table_test::table_test;
 
     #[test]
     fn next_token() {
@@ -146,6 +162,15 @@ let add = fn(x, y) {
 let result = add(five, ten);
 !-/*5;
 5 < 10 > 5;
+
+if (5 < 10) {
+  return true;
+} else {
+  return false;
+}
+
+10 == 10;
+10 != 9;
 "###;
         let tests = vec![
             (TokenType::Let, "let"),
@@ -195,6 +220,31 @@ let result = add(five, ten);
             (TokenType::Int, "10"),
             (TokenType::Gt, ">"),
             (TokenType::Int, "5"),
+            (TokenType::Semicolon, ";"),
+            (TokenType::If, "if"),
+            (TokenType::LParen, "("),
+            (TokenType::Int, "5"),
+            (TokenType::Lt, "<"),
+            (TokenType::Int, "10"),
+            (TokenType::RParen, ")"),
+            (TokenType::LBrace, "{"),
+            (TokenType::Return, "return"),
+            (TokenType::True, "true"),
+            (TokenType::Semicolon, ";"),
+            (TokenType::RBrace, "}"),
+            (TokenType::Else, "else"),
+            (TokenType::LBrace, "{"),
+            (TokenType::Return, "return"),
+            (TokenType::False, "false"),
+            (TokenType::Semicolon, ";"),
+            (TokenType::RBrace, "}"),
+            (TokenType::Int, "10"),
+            (TokenType::Eq, "=="),
+            (TokenType::Int, "10"),
+            (TokenType::Semicolon, ";"),
+            (TokenType::Int, "10"),
+            (TokenType::NotEq, "!="),
+            (TokenType::Int, "9"),
             (TokenType::Semicolon, ";"),
             (TokenType::EOF, ""),
         ];

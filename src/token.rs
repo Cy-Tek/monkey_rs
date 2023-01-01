@@ -34,6 +34,8 @@ pub enum TokenType {
     Slash,
     Lt,
     Gt,
+    Eq,
+    NotEq,
 
     Comma,
     Semicolon,
@@ -43,8 +45,14 @@ pub enum TokenType {
     LBrace,
     RBrace,
 
+    // Keywords
     Function,
     Let,
+    True,
+    False,
+    If,
+    Else,
+    Return
 }
 
 impl fmt::Display for TokenType {
@@ -70,6 +78,13 @@ impl fmt::Display for TokenType {
             TokenType::Slash => write!(f, "/"),
             TokenType::Lt => write!(f, "<"),
             TokenType::Gt => write!(f, ">"),
+            TokenType::True => write!(f, "TRUE"),
+            TokenType::False => write!(f, "FALSE"),
+            TokenType::If => write!(f, "IF"),
+            TokenType::Else => write!(f, "ELSE"),
+            TokenType::Return => write!(f, "RETURN"),
+            TokenType::Eq => write!(f, "=="),
+            TokenType::NotEq => write!(f, "!="),
         }
     }
 }
@@ -78,6 +93,11 @@ static KEYWORDS: Lazy<HashMap<String, TokenType>> = Lazy::new(|| {
     let mut hash = HashMap::new();
     hash.insert("fn".to_string(), TokenType::Function);
     hash.insert("let".to_string(), TokenType::Let);
+    hash.insert("true".to_owned(), TokenType::True);
+    hash.insert("false".to_owned(), TokenType::False);
+    hash.insert("if".to_owned(), TokenType::If);
+    hash.insert("else".to_owned(), TokenType::Else);
+    hash.insert("return".to_owned(), TokenType::Return);
     hash
 });
 
