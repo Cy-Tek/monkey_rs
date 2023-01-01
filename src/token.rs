@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use std::fmt;
 use std::fmt::Formatter;
 
+#[derive(Eq, PartialEq, Clone, Debug)]
 pub struct Token {
     pub kind: TokenType,
     pub literal: String,
