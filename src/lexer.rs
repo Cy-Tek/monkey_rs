@@ -249,8 +249,6 @@ if (5 < 10) {
             (TokenType::EOF, ""),
         ];
         let mut lexer = Lexer::new(input.clone().into());
-        let mut iter = input.chars();
-
         for (validator, e_token, e_literal) in table_test!(tests) {
             let current_char = lexer.ch;
             let actual = lexer.next_token();
