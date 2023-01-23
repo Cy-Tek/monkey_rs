@@ -1,11 +1,11 @@
-use std::{rc::Rc, any::Any};
+use std::rc::Rc;
 
 use crate::token::Token;
+use crate::utils::poly::AsAny;
 use monkey_derive::{Expression, Statement};
 
-pub trait Node {
+pub trait Node: AsAny {
     fn token_literal(&self) -> String;
-    fn as_any(&self) -> &dyn Any;
 }
 
 pub trait Statement: Node {}
@@ -38,7 +38,6 @@ where
     }
 }
 
-
 pub struct Program {
     pub statements: Vec<Box<dyn Statement>>,
 }
@@ -57,8 +56,6 @@ impl Node for Program {
             .get(0)
             .map_or(String::new(), |statement| statement.token_literal())
     }
-
-    fn as_any(&self) -> &dyn Any { self }
 }
 
 #[derive(Statement, Clone)]

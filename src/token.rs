@@ -53,7 +53,7 @@ pub enum TokenType {
     False,
     If,
     Else,
-    Return
+    Return,
 }
 
 impl fmt::Display for TokenType {

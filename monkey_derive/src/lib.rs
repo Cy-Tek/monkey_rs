@@ -28,10 +28,6 @@ pub fn expression(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
                     fn token_literal(&self) -> String {
                         self.#ident.literal.clone()
                     }
-
-                    fn as_any(&self) -> &dyn Any {
-                        self
-                    }
                 }
             };
 
@@ -61,17 +57,13 @@ pub fn statement(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
         });
 
         if let Some(syn::Field {
-                        ident: Some(ident), ..
-                    }) = token_field
+            ident: Some(ident), ..
+        }) = token_field
         {
             let node_impl = quote! {
                 impl Node for #name {
                     fn token_literal(&self) -> String {
                         self.#ident.literal.clone()
-                    }
-
-                    fn as_any(&self) -> &dyn Any {
-                        self
                     }
                 }
             };

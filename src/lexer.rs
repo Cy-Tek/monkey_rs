@@ -30,9 +30,9 @@ impl Lexer {
                 '=' => {
                     self.read_char();
                     Token::new(Eq, "==".into())
-                },
-                _ =>  Token::new(Assign, "=".into())
-            }
+                }
+                _ => Token::new(Assign, "=".into()),
+            },
             ';' => Token::new(Semicolon, ";".into()),
             ',' => Token::new(Comma, ",".into()),
             '(' => Token::new(LParen, "(".into()),
@@ -45,9 +45,9 @@ impl Lexer {
                 '=' => {
                     self.read_char();
                     Token::new(NotEq, "!=".into())
-                },
+                }
                 _ => Token::new(Bang, "!".into()),
-            }
+            },
             '/' => Token::new(Slash, '/'.into()),
             '*' => Token::new(Asterisk, "*".into()),
             '<' => Token::new(Lt, '<'.into()),

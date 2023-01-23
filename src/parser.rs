@@ -4,9 +4,9 @@ use crate::token::{Token, TokenType};
 
 pub struct Parser {
     lexer: Lexer,
-
     cur_token: Option<Token>,
     peek_token: Option<Token>,
+    pub errors: Vec<String>,
 }
 
 impl Parser {
@@ -15,6 +15,7 @@ impl Parser {
             lexer,
             cur_token: None,
             peek_token: None,
+            errors: Vec::new(),
         };
 
         // We need to prime the current token and peek token
@@ -46,7 +47,7 @@ impl Parser {
     fn parse_statement(&mut self) -> Option<impl Statement> {
         match self.cur_token.as_ref()?.kind {
             TokenType::Let => self.parse_let_statement(),
-            _ => None
+            _ => None,
         }
     }
 
@@ -64,8 +65,7 @@ impl Parser {
             return None;
         }
 
-
-        while !self.current_token_is(TokenType::EOF) {
+        while !self.current_token_is(TokenType::Semicolon) {
             self.read_token();
         }
 
@@ -77,7 +77,9 @@ impl Parser {
     }
 
     fn current_token_is(&self, token_type: TokenType) -> bool {
-        self.peek_token.as_ref().is_some_and(|t| t.kind == token_type)
+        self.peek_token
+            .as_ref()
+            .is_some_and(|t| t.kind == token_type)
     }
 
     fn expect_peek(&mut self, token_type: TokenType) -> bool {
@@ -87,6 +89,14 @@ impl Parser {
         }
 
         false
+    }
+
+    fn peek_error(&mut self, token_type: TokenType) {
+        let error = format!(
+            "Expected next token to be {}, got {:?} instead",
+            token_type, self.peek_token
+        );
+        self.errors.push(error);
     }
 }
 

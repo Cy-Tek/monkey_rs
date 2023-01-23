@@ -1,14 +1,15 @@
 #![feature(option_result_contains)]
 #![feature(is_some_and)]
 
-use std::io::{BufRead, stdin};
 use crate::lexer::Lexer;
 use crate::token::TokenType;
+use std::io::{stdin, BufRead};
 
 mod ast;
 mod lexer;
-mod token;
 mod parser;
+mod token;
+mod utils;
 
 fn main() {
     let mut input = String::new();
